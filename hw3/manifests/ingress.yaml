@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: healthapp-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      rewrite ^/health/?$ /health break;
+      rewrite ^/otusapp/([A-Za-z]+)/.* /greeting/$1 break;
+      return 404;
+spec:
+  rules:
+  - host: arch.homework
+    http:
+      paths:
+      - path: /(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: healthapp-service
+            port:
+              number: 80

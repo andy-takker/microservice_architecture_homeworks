@@ -12,9 +12,14 @@ func healthHandler(c *gin.Context) {
 	})
 }
 
+func greeterHandler(c *gin.Context) {
+	c.String(http.StatusOK, "Hello, %s!", c.Param("name"))
+}
+
 func main() {
 	router := gin.Default()
 
-	router.GET("/health/", healthHandler)
+	router.GET("/health", healthHandler)
+	router.GET("/greeting/:name", greeterHandler)
 	router.Run(":8000")
 }
