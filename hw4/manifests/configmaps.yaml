@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: userapp
+data:
+  db_host: postgres-0.postgres.default.svc.cluster.local

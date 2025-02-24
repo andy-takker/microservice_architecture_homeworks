@@ -32,7 +32,10 @@ spec:
                   name: secrets
                   key: db_name
             - name: APP_DATABASE_HOST
-              value: postgres-0.postgres.default.svc.cluster.local
+              valueFrom:
+                configMapKeyRef:
+                  name: configs
+                  key: db_host
             - name: APP_DATABASE_PORT
               value: "5432"
           imagePullPolicy: Always
