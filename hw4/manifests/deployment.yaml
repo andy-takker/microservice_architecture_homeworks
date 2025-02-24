@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userapp-deployment
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: userapp
+  template:
+    metadata:
+      labels:
+        app: userapp
+    spec:
+      containers:
+        - name: user
+          image: docker.io/andytakker/simple_server:latest
+          env:
+            - name: APP_DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db_user
+            - name: APP_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db_password
+            - name: APP_DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db_name
+            - name: APP_DATABASE_HOST
+              value: postgres-0.postgres.default.svc.cluster.local
+            - name: APP_DATABASE_PORT
+              value: "5432"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              name: api
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "200m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: api
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: api
+            initialDelaySeconds: 15
+            periodSeconds: 20
